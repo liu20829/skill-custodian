@@ -1,0 +1,35 @@
+{
+  "skill_name": "skill-maintenance",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "我要创建一个长期维护的新技能 foo，目录已存在且 SKILL.md frontmatter 合法。请开始出生仪式。",
+      "expected_output": "触发 §C：先运行 init_ledger.py --skill-dir foo 生成 README/账本/提案区/轮次区与维护通道块；起草规则前先写 README 技能边界；委托 skill-creator 完成访谈、起草、评估、迭代；核验出生仪式（README 四节、账本、proposals/open+archive、rounds、通道块、evals 基线）；记录出生行。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "我在用技能 bar 时，它的步骤 3 指引有歧义，我绕过了那一步才完成任务。",
+      "expected_output": "触发 §A：在 bar/proposals/open/<提案ID>/REPORT.md 按模板写提案，含提案ID、现象、涉及文件与片段、复现步骤、期望结果；严重度标 normal；提交后继续当前任务，不阻塞；不修改 bar 的 SKILL.md 或脚本。",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "技能 baz 的指引让我把输出写成了错误格式，交付物被退回重做。",
+      "expected_output": "触发 §A：提交提案并把严重度标 critical（指引直接导致任务失败或错误交付物）；继续完成当前任务；不改受治理技能，现场补丁只写进提案证据附件。",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "技能 qux 的 open 提案已攒到 6 条，发起一轮维护。",
+      "expected_output": "触发 §B：按 12 步执行——加载全量上下文并写轮报告与快照；审计兜底；上轮复核；分诊聚类；用四种裁决覆盖本轮提案集；按锚点整合修改；一致性/引用/锚点/边界/回归验证；预算检查；更新账本与轮报告；归档；收轮自查。",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "我想改一个没有 README 和 MAINTENANCE.md 的技能 quux。",
+      "expected_output": "触发 §C 收养路径：停止直接修改，先报告 owner（或由 owner/维护者触发）；确认无历史痕迹后运行 init_ledger.py --adopt；不覆盖已有 README 与历史；收养完成后再按常规维护。",
+      "files": []
+    }
+  ]
+}

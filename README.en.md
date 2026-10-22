@@ -67,6 +67,21 @@ In one sentence: **it turns skill maintenance from improvised chat edits into an
 
 ---
 
+## Dependencies & external tools
+
+| Type | Dependency | Notes |
+|---|---|---|
+| Required | Python 3.9+ | Standard library only; runs `scripts/*.py` and self-checks |
+| Required | An agent runtime that loads `SKILL.md` | e.g. Claude Code / Codex / DSH |
+| Optional | `skill-creator` | Used only during birth/drafting/evaluation as a methodology and an eval loop; without it, follow §C manually — the birth ritual and maintenance rounds are unaffected |
+
+### Relationship to skill-creator: delegation, not a fork
+
+- This repo does **not** distribute or modify `skill-creator`. It is maintained upstream and usually ships with your agent runtime (Claude Code / Codex), or can be obtained from its official distribution.
+- The birth flow (§C) delegates its "interview → draft → evaluate → iterate" methodology to it; step 8 of a maintenance round may use its eval loop for a before/after comparison.
+- **It works without it**: `init_ledger.py`, the 12-step maintenance round, `check_skill.py`, `index_proposals.py`, and `verify.py` all run independently. Without `skill-creator`, the creation phase degrades to hand-writing `SKILL.md`, authoring evals yourself, and manual comparison.
+- **Never** use it to modify a governed skill directly: changes to governed skills go through proposals + maintenance rounds (§A prohibition).
+
 ## Quick start (5 minutes)
 
 ### 1) Install as a skill

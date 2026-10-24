@@ -117,6 +117,70 @@ def _check_channel(skill_md_text: str, stage: str) -> list[str]:
     return out
 
 
+def _strip_html_comments(text: str) -> str:
+    return re.sub(r"<!--.*?-->", "", text, flags=re.S)
+
+
+def _boundary_precedent_rows(section: str) -> list[list[str]]:
+    """边界判例表的数据行；表头须同时含 场景/判断/理由，否则视为没有判例表。"""
+    tables: list[list[list[str]]] = []
+    current: list[list[str]] = []
+    for raw in section.splitlines():
+        line = raw.strip()
+        if not line.startswith("|"):
+            if current:
+                tables.append(current)
+                current = []
+            continue
+        cells = [c.strip() for c in line.strip("|").split("|")]
+        if all(set(c) <= set("-: ") for c in cells):
+            continue
+        current.append(cells)
+    if current:
+        tables.append(current)
+    for table in tables:
+        header = table[0]
+        if all(any(keyword in cell for cell in header) for keyword in ("场景", "判断", "理由")):
+            return table[1:]
+    return []
+
+
+def _check_readme_boundary(skill_dir: Path, stage: str) -> list[str]:
+    """governed 技能 README 边界：ratified + 判例表（表头 + ≥3 行）+ approval_id；incubating 不检查。"""
+    if stage != "governed":
+        return []
+    readme = skill_dir / "README.md"
+    if not readme.is_file():
+        return ["README.md: missing (governed requires ratified 技能边界)"]
+    section = _section(_read(readme), "技能边界")
+    if not section:
+        return ["README.md: missing ## 技能边界"]
+    # HTML 注释只是填写指引，不构成批准记录或判例证据
+    visible = _strip_html_comments(section)
+    findings: list[str] = []
+    status = None
+    for line in visible.splitlines():
+        m = re.match(r"^\s*[-*]?\s*状态:\s*(.+)$", line)
+        if m:
+            status = m.group(1).strip()
+            break
+    if status is None:
+        findings.append("README.md: 技能边界 missing 状态:")
+    elif not status.startswith("ratified"):
+        findings.append(
+            f"README.md: 技能边界 状态 must be ratified, got {status.split('（', 1)[0].strip()}"
+        )
+    if "边界判例" not in visible:
+        findings.append("README.md: 技能边界 missing 边界判例")
+    else:
+        rows = _boundary_precedent_rows(visible)
+        if len(rows) < 3:
+            findings.append(f"README.md: 技能边界 判例表需 ≥3 条数据行，got {len(rows)}")
+    if "approval_id" not in visible:
+        findings.append("README.md: 技能边界 missing approval_id")
+    return findings
+
+
 def _check_structure(skill_dir: Path, stage: str) -> list[str]:
     """维护面结构校验：三个固定目录、open 提案 REPORT 必需键、轮次 REPORT 存在。"""
     if stage not in {"governed", "incubating"}:
@@ -269,6 +333,7 @@ def check(skill_dir: Path) -> list[str]:
         findings.append("missing SKILL.md")
     stage = header.get("stage", "incubating")
     findings += _check_structure(skill_dir, stage)
+    findings += _check_readme_boundary(skill_dir, stage)
     if skill_exists:
         findings += _check_channel(skill_md, stage)
         if len(skill_md.splitlines()) > 500:

@@ -4,7 +4,7 @@
 >
 > [English](README.en.md) | 中文
 
-[![status](https://img.shields.io/badge/status-v0.2.12-brightgreen)]() [![tests](https://img.shields.io/badge/reference%20tests-200%20passed-brightgreen)]() [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![status](https://img.shields.io/badge/status-v0.2.13-brightgreen)]() [![tests](https://img.shields.io/badge/reference%20tests-200%20passed-brightgreen)]() [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 ---
 
@@ -143,7 +143,7 @@ python skill-maintenance/scripts/check_skill.py --skill-dir ~/skills/my-existing
 
 | 验证 | 结果 |
 |---|---|
-| 回归测试（开发仓库） | **200 passed** |
+| 回归测试（开发仓库） | **222 passed** |
 | Dry-run（合成技能，19 条发现） | 修订后复跑：10 条消解 / 2 条部分 / 0 条仍存在 |
 | 真实试点（`codebase-learning-plan`，12 条真实提案） | 2 轮维护：**改造 12/12（100%）**，采纳 0，复发 0，越权 0；SKILL.md 291→305 行（+14），在预算内 |
 | 提案质量 | 真实用户提案 → 3 簇 → 改造入 3 条稳定规则；拒绝堆砌 |
@@ -209,4 +209,4 @@ MIT —— 见 [`LICENSE`](LICENSE)。
 
 ---
 
-<sub>Skill Custodian / 技能管家 · v0.2.12 · 用"轮次"代替"即兴修改"</sub>
+<sub>Skill Custodian / 技能管家 · v0.2.13 · 用"轮次"代替"即兴修改"</sub>

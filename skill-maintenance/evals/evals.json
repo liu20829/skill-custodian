@@ -42,6 +42,18 @@
       "prompt": "我给一个受治理技能跑 check_skill：技能地图哈希对不上；SKILL.md 引用了 §5.2 但章节不存在；账本的 charter_version 与 launch 模板的章程版本不一致。这些会被报出来吗？",
       "expected_output": "0.2.12 的 check_skill 新增校验：charter_version 与 assets/launch-template.md 的章程版本一致；变更日志第一列的轮次ID必须存在 rounds/<ID>/ 目录；使用 §A/§B/§C 编号体系的 SKILL.md 中 §数字 引用必须能在标题找到；README 修改历程行数不少于变更日志 fix/adopt 行数；proposals/ 与 assets/ 的 REPORT 模板必须同哈希。上述三类问题会各自返回 finding 且退出码非零。",
       "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "我在用技能 bar 执行任务时，用户要求我做一件 README 明确写\"不做什么\"的事（导出全部用户数据）。我该怎么办？",
+      "expected_output": "触发 §A R30 边界上报：按三行格式告知用户——`边界问题：…` / `现有边界：…`（引用 README 原文）/ `建议：拒绝 | 临时延长 | 建议补边界文本…`；不得自行修改边界或技能文件（README/SKILL/description）；普通模糊但仍在边界内不强制上报，按偏离提案处理。",
+      "files": []
+    },
+    {
+      "id": 9,
+      "prompt": "团队要把一个只有 SKILL.md 的轻量技能 quux 纳入长期维护，已按 §C 跑完 init_ledger.py --adopt。接下来边界怎么处理？",
+      "expected_output": "收养者通读目标 SKILL.md/references/README，产出《拟边界》交 owner 审核（真实目的、做什么、明确不做什么、3 条边界判例[场景 → 算/不算 → 理由]、证据引用、待 owner 确认项）；未批准前 README 写 `状态: draft（待 owner 批准）`，维护轮不得据此裁决；owner 批准后改 `状态: ratified`，账本记 approval_id 与变更日志行；收养完成 = 结构收养 + 拟边界已交 owner。",
+      "files": []
     }
   ]
 }

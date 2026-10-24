@@ -131,7 +131,7 @@ def _mark_readme_boundary_unknown(readme: Path) -> None:
 
 
 def build_skill(skill_dir, *, adopt=False, stage="incubating", owner="owner",
-                date=None, charter_version="0.2.12") -> dict:
+                date=None, charter_version="0.2.13") -> dict:
     skill_dir = Path(skill_dir).resolve()
     name = skill_name(skill_dir)
     day = date or _dt.date.today().isoformat()
@@ -208,8 +208,8 @@ def main(argv=None) -> int:
     ap.add_argument("--stage", default="incubating", choices=["incubating", "governed"])
     ap.add_argument("--owner", default="owner")
     ap.add_argument("--date", default=None)
-    ap.add_argument("--charter-version", default="0.2.12",
-                    help="章程版本（默认 0.2.12，与当前 spec 版本一致）")
+    ap.add_argument("--charter-version", default="0.2.13",
+                    help="章程版本（默认 0.2.13，与当前 spec 版本一致）")
     args = ap.parse_args(argv)
     try:
         summary = build_skill(Path(args.skill_dir), adopt=args.adopt, stage=args.stage,

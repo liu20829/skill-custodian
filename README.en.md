@@ -4,7 +4,7 @@
 >
 > English | [中文](README.md)
 
-[![status](https://img.shields.io/badge/status-v0.2.12-brightgreen)]() [![reference tests](https://img.shields.io/badge/reference%20tests-200%20passed-brightgreen)]() [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![status](https://img.shields.io/badge/status-v0.2.13-brightgreen)]() [![reference tests](https://img.shields.io/badge/reference%20tests-200%20passed-brightgreen)]() [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 ---
 
@@ -139,7 +139,7 @@ python skill-maintenance/scripts/check_skill.py --skill-dir ~/skills/my-existing
 
 | Validation | Result |
 |---|---|
-| Regression tests (development repo) | **200 passed** |
+| Regression tests (development repo) | **222 passed** |
 | Dry run on a synthetic skill (19 findings) | After the revision round: 10 resolved / 2 partial / 0 still present |
 | Real pilot (`codebase-learning-plan`, 12 real proposals) | 2 rounds: **12/12 transformed (100%)**, 0 adopted, 0 recurrence, 0 unauthorized changes; SKILL.md 291→305 lines (+14), within budget |
 | Proposal quality | Real user proposals → 3 clusters → transformed into 3 stable rules; no patch pile-up |
@@ -205,4 +205,4 @@ MIT — see [`LICENSE`](LICENSE).
 
 ---
 
-<sub>Skill Custodian · v0.2.12 · rounds over improvisation</sub>
+<sub>Skill Custodian · v0.2.13 · rounds over improvisation</sub>

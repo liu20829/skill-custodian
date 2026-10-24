@@ -1,7 +1,7 @@
 ---
 name: skill-maintenance
 description: 维护 AI 智能体技能（SKILL.md 及其附件）的全生命周期治理。用于：创建需要长期维护的新技能（出生仪式：README/账本/提案区/回归基线）；对某个技能的指引提出反馈或报告技能导致的任务失败；发起或执行一轮技能维护（裁决提案、整合修改、审计越权）；给无账本的技能补收养。不用于：直接改代码、内容创作、一次性实验技能。
-version: 0.2.12
+version: 0.2.13
 ---
 
 # §A 工作者协议
@@ -25,6 +25,10 @@ version: 0.2.12
 7. [R7] 提交提案后继续完成当前任务，不阻塞、不等待。
 8. [R8] 孵化期例外：incubating 技能可直接修改，但必须在 MAINTENANCE.md 变更日志追加：任务ID | 改了什么 | 为什么。
 9. [R9] 收养：修改无账本技能前，报告 owner 触发收养（§C 的 --adopt 模式），不要自行写入。
+
+## 边界上报
+
+10. [R30] 遇到"用户请求明显超出 README 不做什么 / 任务需要临时扩展用法 / 用户口头给出新边界"时，按三行格式告知用户：`边界问题：…` / `现有边界：…` / `建议：拒绝 | 临时延长 | 建议补边界文本…`；不得自行修改边界或技能文件（README/SKILL/description）；普通模糊但仍在边界内不强制上报，按第 2 条提交提案。
 
 # §B 维护者章程
 
@@ -94,7 +98,7 @@ version: 0.2.12
 ## 五步
 
 1. **init 先行**：运行 `python <本技能目录>/scripts/init_ledger.py --skill-dir <目标技能目录>`（目标目录须已存在且含合法 SKILL.md frontmatter）。脚本生成 README/账本/proposals/rounds 骨架、空的 proposals 双 INDEX 与维护通道块；账本 `evals` 字段按目标技能是否已有 `evals/evals.json` 写 `yes`/`no`。
-2. **边界先行**：起草技能规则之前，先写 README 的"技能边界"节（做什么、明确不做什么）；description 从这里压缩。
+2. **边界先行**：起草技能规则之前，先写 README 的"技能边界"节（做什么、明确不做什么、3 条边界判例），未获 owner 批准时标 `状态: draft（待 owner 批准）`；description 从这里压缩。
 3. **委托执行**：按 skill-creator 的流程访谈 → 起草 → 评估 → 迭代 → 描述优化；过程中产生的规则级"为什么"随手记入 MAINTENANCE 设计意图节。
 4. **核验出生仪式**：README 四节 / MAINTENANCE（stage: incubating）/ proposals/open + archive / rounds / 维护通道块 / evals 基线（skill-creator 的测试提示词）齐全。**缺任何一项都不算出生。**
 5. **记录**：变更日志已含出生行（脚本写入）；把本轮的测试提示词沉淀为 `evals/evals.json`，重跑 `<skill-maintenance>/scripts/check_skill.py --skill-dir <目标> --rebuild-map` 并通过。
@@ -107,6 +111,7 @@ version: 0.2.12
 - 执行：`python <本技能目录>/scripts/init_ledger.py --skill-dir <目标技能目录> --adopt`（owner 可加 `--stage governed` 直接指定治理期）。
 - 产物：README（诞生背景 unknown）、账本（stage: incubating、adopted: true）、proposals/rounds、维护通道块；不覆盖已有 README；幂等（已有账本则退出 0）。
 - 默认 stage 为 incubating；晋级 governed 须 owner 批准并记 stage_history。
+- 边界起草与批准：结构收养后，收养者必须通读目标 SKILL.md/references/README，产出《拟边界》交 owner 审核——真实目的、做什么、明确不做什么、3 条边界判例（场景 → 算/不算 → 理由）、证据引用、待 owner 确认项。未批准前 README 边界标 `状态: draft（待 owner 批准）`，维护轮不得据此裁决；owner 批准后改 `状态: ratified`，账本记 `approval_id` + 变更日志行。**收养完成 = 结构收养 + 拟边界已交 owner**（是否 ratified 由 owner 决定）；governed 技能的边界必须是 `状态: ratified`（`check_skill.py` 校验）。
 
 ## 维护通道（governed）
 

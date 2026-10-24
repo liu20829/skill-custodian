@@ -4,7 +4,7 @@
 >
 > English | [中文](README.md)
 
-[![status](https://img.shields.io/badge/status-v0.2.11-brightgreen)]() [![reference tests](https://img.shields.io/badge/reference%20tests-200%20passed-brightgreen)]() [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![status](https://img.shields.io/badge/status-v0.2.12-brightgreen)]() [![reference tests](https://img.shields.io/badge/reference%20tests-200%20passed-brightgreen)]() [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 ---
 
@@ -38,7 +38,7 @@ governed-skill/
 ├── proposals/               # proposals: open (incl. draft) + archive + two INDEXes
 ├── rounds/                  # rounds: reports + pre-change snapshots
 ├── evals/                   # regression baseline
-└── approvals/               # owner approvals
+└── scripts/                 # deterministic scripts: birth / check / index / publish-verify
 ```
 
 **Division of labor:** worker agents only file proposals; they do not edit the skill. A maintainer agent adjudicates, integrates, verifies, and archives in fixed rounds. The owner owns boundaries, invariants, and promotion/demotion.
@@ -79,7 +79,7 @@ In one sentence: **it turns skill maintenance from improvised chat edits into an
 
 - This repo does **not** distribute or modify `skill-creator`. It is maintained upstream and usually ships with your agent runtime (Claude Code / Codex), or can be obtained from its official distribution.
 - The birth flow (§C) delegates its "interview → draft → evaluate → iterate" methodology to it; step 8 of a maintenance round may use its eval loop for a before/after comparison.
-- **It works without it**: `init_ledger.py`, the 12-step maintenance round, `check_skill.py`, `index_proposals.py`, and `verify.py` all run independently. Without `skill-creator`, the creation phase degrades to hand-writing `SKILL.md`, authoring evals yourself, and manual comparison.
+- **It works without it**: `init_ledger.py`, the 12-step maintenance round, `check_skill.py`, and `index_proposals.py` all run independently. Without `skill-creator`, the creation phase degrades to hand-writing `SKILL.md`, authoring evals yourself, and manual comparison.
 - **Never** use it to modify a governed skill directly: changes to governed skills go through proposals + maintenance rounds (§A prohibition).
 
 ## Quick start (5 minutes)
@@ -119,7 +119,7 @@ Fill in `skill-maintenance/assets/launch-template.md` (target path, round ID, ty
 ```text
 You are the maintainer of the skill at <absolute target path>, not a worker;
 you only maintain it and do not perform the skill's own job.
-Charter version: 0.2.11
+Charter version: 0.2.12
 Charter: <skill-maintenance>/SKILL.md (read §B first)
 ...
 ```
@@ -205,4 +205,4 @@ MIT — see [`LICENSE`](LICENSE).
 
 ---
 
-<sub>Skill Custodian · v0.2.11 · rounds over improvisation</sub>
+<sub>Skill Custodian · v0.2.12 · rounds over improvisation</sub>

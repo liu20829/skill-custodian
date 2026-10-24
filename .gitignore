@@ -3,3 +3,6 @@ __pycache__/
 .pytest_cache/
 tmp/
 .superpowers/
+skill-maintenance/proposals
+skill-maintenance/rounds
+_private_/

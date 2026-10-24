@@ -4,7 +4,7 @@
     {
       "id": 1,
       "prompt": "我要创建一个长期维护的新技能 foo，目录已存在且 SKILL.md frontmatter 合法。请开始出生仪式。",
-      "expected_output": "触发 §C：先运行 init_ledger.py --skill-dir foo 生成 README/账本/提案区/轮次区与维护通道块；起草规则前先写 README 技能边界；委托 skill-creator 完成访谈、起草、评估、迭代；核验出生仪式（README 四节、账本、proposals/open+archive、rounds、通道块、evals 基线）；记录出生行。",
+      "expected_output": "触发 §C：先运行 init_ledger.py --skill-dir foo 生成 README/账本/提案区/轮次区、空的 proposals/open/INDEX.md 与 proposals/archive/INDEX.md、维护通道块；起草规则前先写 README 技能边界；委托 skill-creator 完成访谈、起草、评估、迭代；核验出生仪式（README 四节、账本、proposals/open+archive、rounds、通道块、evals 基线）；记录出生行。",
       "files": []
     },
     {
@@ -29,6 +29,18 @@
       "id": 5,
       "prompt": "我想改一个没有 README 和 MAINTENANCE.md 的技能 quux。",
       "expected_output": "触发 §C 收养路径：停止直接修改，先报告 owner（或由 owner/维护者触发）；确认无历史痕迹后运行 init_ledger.py --adopt；不覆盖已有 README 与历史；收养完成后再按常规维护。",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "我要新建一个长期维护的技能 foo，跑完 init_ledger 后想按 §A 第 2 条提交第一条提案、先查重，但不确定现在有没有 INDEX 可读。",
+      "expected_output": "0.2.12 起 init_ledger 在出生时生成空的 proposals/open/INDEX.md 与 proposals/archive/INDEX.md（内容为“当前无 open 提案/当前无归档提案”），因此首个提案提交前即可按 §A 查重；INDEX 缺失时视为无历史。",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "我给一个受治理技能跑 check_skill：技能地图哈希对不上；SKILL.md 引用了 §5.2 但章节不存在；账本的 charter_version 与 launch 模板的章程版本不一致。这些会被报出来吗？",
+      "expected_output": "0.2.12 的 check_skill 新增校验：charter_version 与 assets/launch-template.md 的章程版本一致；变更日志第一列的轮次ID必须存在 rounds/<ID>/ 目录；使用 §A/§B/§C 编号体系的 SKILL.md 中 §数字 引用必须能在标题找到；README 修改历程行数不少于变更日志 fix/adopt 行数；proposals/ 与 assets/ 的 REPORT 模板必须同哈希。上述三类问题会各自返回 finding 且退出码非零。",
       "files": []
     }
   ]

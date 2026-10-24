@@ -131,7 +131,7 @@ def _mark_readme_boundary_unknown(readme: Path) -> None:
 
 
 def build_skill(skill_dir, *, adopt=False, stage="incubating", owner="owner",
-                date=None, charter_version="0.2.11") -> dict:
+                date=None, charter_version="0.2.12") -> dict:
     skill_dir = Path(skill_dir).resolve()
     name = skill_name(skill_dir)
     day = date or _dt.date.today().isoformat()
@@ -190,6 +190,14 @@ def build_skill(skill_dir, *, adopt=False, stage="incubating", owner="owner",
     (skill_dir / "MAINTENANCE.md").write_text(ledger, encoding="utf-8", newline="\n")
     created.append("MAINTENANCE.md")
 
+    # 5) 提案双 INDEX：出生即可查重，避免首个提案前无索引（131533）
+    from index_proposals import build_archive_index, build_index
+
+    for sub, content in (("open", build_index(skill_dir, day)), ("archive", build_archive_index(skill_dir))):
+        idx = skill_dir / "proposals" / sub / "INDEX.md"
+        idx.write_text(content, encoding="utf-8", newline="\n")
+        created.append(f"proposals/{sub}/INDEX.md")
+
     return {"created": created, "stage": stage, "evals": evals}
 
 
@@ -200,8 +208,8 @@ def main(argv=None) -> int:
     ap.add_argument("--stage", default="incubating", choices=["incubating", "governed"])
     ap.add_argument("--owner", default="owner")
     ap.add_argument("--date", default=None)
-    ap.add_argument("--charter-version", default="0.2.11",
-                    help="章程版本（默认 0.2.11，与当前 spec 版本一致）")
+    ap.add_argument("--charter-version", default="0.2.12",
+                    help="章程版本（默认 0.2.12，与当前 spec 版本一致）")
     args = ap.parse_args(argv)
     try:
         summary = build_skill(Path(args.skill_dir), adopt=args.adopt, stage=args.stage,

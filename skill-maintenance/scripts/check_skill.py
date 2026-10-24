@@ -148,6 +148,80 @@ def _check_structure(skill_dir: Path, stage: str) -> list[str]:
     return findings
 
 
+def _check_version_consistency(skill_dir: Path, header: dict[str, str]) -> list[str]:
+    """章程版本一致：账本 header 的 charter_version ↔ assets/launch-template.md 的“章程版本”。"""
+    ledger_ver = header.get("charter_version", "").strip()
+    if not ledger_ver:
+        return []
+    launch = skill_dir / "assets" / "launch-template.md"
+    if not launch.is_file():
+        return []
+    m = re.search(r"章程版本:\s*(\S+)", _read(launch))
+    if m and m.group(1) != ledger_ver:
+        return [f"charter_version mismatch: MAINTENANCE.md {ledger_ver} != launch-template {m.group(1)}"]
+    return []
+
+
+def _check_changelog_rounds(skill_dir: Path, ledger_text: str) -> list[str]:
+    """变更日志第一列若写了轮次ID，必须存在 rounds/<轮次ID>/ 目录。"""
+    findings: list[str] = []
+    for line in _section(ledger_text, "变更日志").splitlines():
+        raw = line.strip()
+        if not raw.startswith("- "):
+            continue
+        cells = [c.strip() for c in raw[2:].strip().strip("|").split("|")]
+        if not cells:
+            continue
+        rid = cells[0].strip()
+        if not rid or rid == "-":
+            continue
+        if not (skill_dir / "rounds" / rid).is_dir():
+            findings.append(f"MAINTENANCE.md: changelog round {rid} has no rounds/{rid} directory")
+    return findings
+
+
+def _check_section_refs(skill_md_text: str) -> list[str]:
+    """使用 §A/§B/§C 编号体系的技能，SKILL.md 内的 §数字 引用必须能在标题里找到。"""
+    headings = re.findall(r"^#+\s+(.+)$", skill_md_text, re.M)
+    if not any("§" in h for h in headings):
+        return []
+    findings: list[str] = []
+    for ref in sorted(set(re.findall(r"§(\d+(?:\.\d+)*)", skill_md_text))):
+        if not any(ref in h for h in headings):
+            findings.append(f"SKILL.md: dangling section reference §{ref}")
+    return findings
+
+
+def _check_readme_history(skill_dir: Path, ledger_text: str) -> list[str]:
+    """README 修改历程的行数不得少于变更日志中的 fix/adopt 行数（出生行不计）。"""
+    readme = skill_dir / "README.md"
+    if not readme.is_file():
+        return []
+    rows = [l for l in _section(_read(readme), "修改历程").splitlines()
+            if l.strip().startswith("- ") and "|" in l]
+    fix_rows = 0
+    for line in _section(ledger_text, "变更日志").splitlines():
+        raw = line.strip()
+        if not raw.startswith("- "):
+            continue
+        cells = [c.strip() for c in raw[2:].strip().strip("|").split("|")]
+        if len(cells) > 2 and cells[2] in {"fix", "adopt"}:
+            fix_rows += 1
+    if len(rows) < fix_rows:
+        return [f"README.md: 修改历程 {len(rows)} 行 < 变更日志 fix/adopt {fix_rows} 行"]
+    return []
+
+
+def _check_template_copy(skill_dir: Path) -> list[str]:
+    """proposals/REPORT.template.md 必须与 assets/REPORT.template.md 一致（防副本漂移）。"""
+    a = skill_dir / "assets" / "REPORT.template.md"
+    b = skill_dir / "proposals" / "REPORT.template.md"
+    if a.is_file() and b.is_file():
+        if hashlib.sha256(a.read_bytes()).hexdigest() != hashlib.sha256(b.read_bytes()).hexdigest():
+            return ["proposals/REPORT.template.md differs from assets/REPORT.template.md"]
+    return []
+
+
 def check(skill_dir: Path) -> list[str]:
     skill_dir = Path(skill_dir).resolve()
     findings: list[str] = []
@@ -237,6 +311,13 @@ def check(skill_dir: Path) -> list[str]:
                 continue
             if not (skill_dir / ref).exists():
                 findings.append(f"{rel} references missing {ref}")
+
+    findings += _check_version_consistency(skill_dir, header)
+    findings += _check_changelog_rounds(skill_dir, text)
+    if skill_exists:
+        findings += _check_section_refs(skill_md)
+    findings += _check_readme_history(skill_dir, text)
+    findings += _check_template_copy(skill_dir)
     return findings
 
 

@@ -4,7 +4,7 @@
 >
 > [English](README.en.md) | 中文
 
-[![status](https://img.shields.io/badge/status-v0.2.11-brightgreen)]() [![tests](https://img.shields.io/badge/reference%20tests-200%20passed-brightgreen)]() [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![status](https://img.shields.io/badge/status-v0.2.12-brightgreen)]() [![tests](https://img.shields.io/badge/reference%20tests-200%20passed-brightgreen)]() [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 ---
 
@@ -43,7 +43,7 @@ Skill Custodian 就是回答这五个问题的。
 ├── proposals/               # 提案区：open（含 draft）+ archive + 双 INDEX
 ├── rounds/                  # 轮次区：报告 + 修改前快照
 ├── evals/                   # 回归基线：越用越准的验证
-└── approvals/               # owner 审批记录
+└── scripts/                 # 确定性脚本：出生 / 自检 / 索引 / 发布校验
 ```
 
 **核心分工**：worker agent 只提提案，不直接改技能；维护者 agent 按固定轮次裁决、整合、验证、归档；owner 掌握边界、不变量与晋级/降级。
@@ -84,7 +84,7 @@ Skill Custodian 就是回答这五个问题的。
 
 - 本仓库**不分发、不修改** `skill-creator`；它由上游维护，随你的 agent 运行器安装（Claude Code / Codex 通常自带），或从其官方分发源获取。
 - 出生流程（§C）委托它的"访谈 → 起草 → 评估 → 迭代"方法论；维护轮第 8 步可借用它的评估循环做新旧版对比。
-- **没有它也能用**：出生仪式（`init_ledger`）、维护轮 12 步、`check_skill`、`index_proposals`、`verify.py` 全部独立运行；缺少它时，创建阶段的起草/评估降级为"手写 SKILL.md + 自建 evals + 手动对照"。
+- **没有它也能用**：出生仪式（`init_ledger`）、维护轮 12 步、`check_skill`、`index_proposals` 全部独立运行；缺少它时，创建阶段的起草/评估降级为"手写 SKILL.md + 自建 evals + 手动对照"。
 - **禁止**用它直接修改受治理技能：受治理技能的改动一律走提案 + 维护轮（§A 禁令）。
 
 ## 5 分钟上手
@@ -123,7 +123,7 @@ python skill-maintenance/scripts/check_skill.py --skill-dir ~/skills/my-new-skil
 
 ```text
 你是技能 <目标绝对路径> 的维护者，不是工作者；你只做维护，不执行该技能的本职任务。
-章程版本: 0.2.11
+章程版本: 0.2.12
 章程：<skill-maintenance>/SKILL.md（先读 §B）
 ...
 ```
@@ -209,4 +209,4 @@ MIT —— 见 [`LICENSE`](LICENSE)。
 
 ---
 
-<sub>Skill Custodian / 技能管家 · v0.2.11 · 用"轮次"代替"即兴修改"</sub>
+<sub>Skill Custodian / 技能管家 · v0.2.12 · 用"轮次"代替"即兴修改"</sub>

@@ -123,7 +123,7 @@ def _severity(value: str | None) -> str:
 
 
 def _status(fields: dict[str, str], verdict_fields: dict[str, str] | None = None) -> str:
-    """生命周期状态：裁决节优先于头部（避免草案标注在提交后残留）；缺省按 §4.3 记为 open。"""
+    """生命周期状态：裁决节优先于头部（避免草案标注在提交后残留）；缺省按裁决口径记为 open。"""
     candidates = []
     if verdict_fields:
         candidates.append(verdict_fields.get("生命周期状态"))

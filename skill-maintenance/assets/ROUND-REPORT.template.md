@@ -52,5 +52,9 @@
 ## 13. 归档
 <已裁决（非挂起-待人工批准）提案移入 proposals/archive/<裁决年月>/<提案ID>/；挂起-待人工批准项留 open 并记起始轮>
 
-## 14. 自查
-<§B 维护轮第 12 步自查清单逐项 ✅/❌；账本 round_in_progress 已清空>
+## 14. 遗留项清单
+
+<收轮时把本轮发现的未决问题写入 `rounds/<轮次ID>/LEFTOVERS.md`（不可变快照）并覆盖根 `LEFTOVERS.md`（最新全量快照）：列 = ID（L-001 起、永不复用）| 首次提出 | 来源（轮次/提案ID 或 轮末自查）| 观察项 | 处理条件 | 状态（open/处理中/已关闭）| 关闭依据（关闭轮次 + 依据）；无遗留也要写"无遗留"快照；本节只列 ID 与一句话，细节在 LEFTOVERS 文件>
+
+## 15. 自查
+<§B 维护轮第 12 步自查清单逐项 ✅/❌；账本 round_in_progress 已清空；rounds/<轮次ID>/ 三件套（REPORT/HANDOFF/LEFTOVERS）已写、根 LEFTOVERS.md 已覆盖为本轮快照>

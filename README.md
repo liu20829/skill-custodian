@@ -4,7 +4,7 @@
 >
 > [English](README.en.md) | 中文
 
-[![status](https://img.shields.io/badge/status-v0.2.13-brightgreen)]() [![tests](https://img.shields.io/badge/reference%20tests-200%20passed-brightgreen)]() [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![status](https://img.shields.io/badge/status-v0.2.14-brightgreen)]() [![tests](https://img.shields.io/badge/reference%20tests-200%20passed-brightgreen)]() [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 ---
 
@@ -39,11 +39,13 @@ Skill Custodian 就是回答这五个问题的。
 被维护技能/
 ├── SKILL.md                 # 运行时：agent 读的指引
 ├── README.md                # 诞生背景 / 技能边界 / 使用场景
-├── MAINTENANCE.md           # 维护面：技能地图 / 规则锚点 / 变更日志 / 否决索引
+├── LEFTOVERS.md             # 最新遗留问题单（跨轮遗留，下一轮必读）
+├── MAINTENANCE.md           # 维护面账本：技能地图 / 规则锚点 / 变更日志 / 否决索引
 ├── proposals/               # 提案区：open（含 draft）+ archive + 双 INDEX
-├── rounds/                  # 轮次区：报告 + 修改前快照
+├── rounds/                  # 轮次区：REPORT / HANDOFF 汇报 / LEFTOVERS 快照 / 修改前快照
+├── references/              # 维护者参考：审计细则 / 裁决判例
 ├── evals/                   # 回归基线：越用越准的验证
-└── scripts/                 # 确定性脚本：出生 / 自检 / 索引 / 发布校验
+└── scripts/                 # 确定性脚本：出生 / 自检 / 索引
 ```
 
 **核心分工**：worker agent 只提提案，不直接改技能；维护者 agent 按固定轮次裁决、整合、验证、归档；owner 掌握边界、不变量与晋级/降级。
@@ -143,11 +145,11 @@ python skill-maintenance/scripts/check_skill.py --skill-dir ~/skills/my-existing
 
 | 验证 | 结果 |
 |---|---|
-| 回归测试（开发仓库） | **222 passed** |
+| 回归测试（开发仓库） | **265 passed** |
 | Dry-run（合成技能，19 条发现） | 修订后复跑：10 条消解 / 2 条部分 / 0 条仍存在 |
-| 真实试点（`codebase-learning-plan`，12 条真实提案） | 2 轮维护：**改造 12/12（100%）**，采纳 0，复发 0，越权 0；SKILL.md 291→305 行（+14），在预算内 |
+| 真实试点（一个真实使用中的技能，12 条真实提案） | 2 轮维护：**改造 12/12（100%）**，采纳 0，复发 0，越权 0 |
 | 提案质量 | 真实用户提案 → 3 簇 → 改造入 3 条稳定规则；拒绝堆砌 |
-| Dogfooding | 用配套的「智能体总管」技能跑真实任务（一键验证工具），一轮审查 + 一轮修复后通过 |
+| Dogfooding | 用一个配套技能跑真实任务（一键验证工具），一轮审查 + 一轮修复后通过 |
 | 自检 | staging 与安装副本 `manifest` 一致；`check_skill` 0 |
 
 > 回归测试、设计规格与试点数据在开发仓库中；本仓库只分发技能本体。
@@ -162,14 +164,21 @@ python skill-maintenance/scripts/check_skill.py --skill-dir ~/skills/my-existing
 ├── README.en.md           # English
 ├── LICENSE                # MIT
 └── skill-maintenance/     # 技能本体（复制到技能目录即可用）
-    ├── SKILL.md           #   worker 协议 / 维护者章程 / 12 步
-    ├── README.md          #   技能诞生背景 / 边界 / 场景
-    ├── MAINTENANCE.md     #   狗粮账本（自监督）
-    ├── scripts/           #   init_ledger / check_skill / index_proposals
+    ├── SKILL.md           #   入口：worker 协议 / 维护者章程 / 12 步 / 委托处理模式
+    ├── README.md          #   技能叙事：诞生背景 / 技能边界 / 使用场景 / 修改历程
+    ├── LEFTOVERS.md       #   最新遗留问题单（发布骨架：无遗留）
+    ├── MAINTENANCE.md     #   账本：不变量 / 锚点 / 地图 / 变更日志 / 否决索引
+    ├── assets/            #   模板：README / 账本 / 提案 / 轮报告 / 启动 / HANDOFF
     ├── references/        #   审计细则 / 裁决判例
-    ├── assets/            #   README/账本/提案/轮报告/启动模板
-    └── evals/             #   回归基线
+    ├── scripts/           #   init_ledger / check_skill / index_proposals
+    ├── evals/             #   回归基线
+    ├── proposals/         #   提案区骨架：open/ + archive/ + 双 INDEX + REPORT 模板
+    └── rounds/            #   轮次区骨架：历史轮次证据不随仓库发布
 ```
+
+**读法（逻辑）**：这个技能把文件分成两个面——**运行时面**（`SKILL.md`、`references/`、`assets/`：agent 执行任务时读的指引）与**维护面**（`MAINTENANCE.md`、`proposals/`、`rounds/`、`LEFTOVERS.md`：治理用）。一轮维护的生命周期是：提案进 `proposals/open/` → 维护轮裁决 → 修改运行时面 → 归档到 `proposals/archive/` → 证据写入 `rounds/<轮次ID>/`（REPORT + HANDOFF + LEFTOVERS 快照 + 修改前 snapshot）→ 下一轮先读根 `LEFTOVERS.md`。
+
+> 发布策略：本仓库只发布**骨架**（空 INDEX / 模板 / 空目录标记），历史提案与轮次证据保留在维护者的本地副本中，不随公开仓库发布。clone 后目录结构完整、`check_skill.py` 可直接通过。
 
 ---
 
@@ -209,4 +218,4 @@ MIT —— 见 [`LICENSE`](LICENSE)。
 
 ---
 
-<sub>Skill Custodian / 技能管家 · v0.2.13 · 用"轮次"代替"即兴修改"</sub>
+<sub>Skill Custodian / 技能管家 · v0.2.14 · 用"轮次"代替"即兴修改"</sub>

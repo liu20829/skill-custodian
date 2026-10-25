@@ -4,7 +4,7 @@
 >
 > English | [中文](README.md)
 
-[![status](https://img.shields.io/badge/status-v0.2.13-brightgreen)]() [![reference tests](https://img.shields.io/badge/reference%20tests-200%20passed-brightgreen)]() [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![status](https://img.shields.io/badge/status-v0.2.14-brightgreen)]() [![reference tests](https://img.shields.io/badge/reference%20tests-200%20passed-brightgreen)]() [![license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 ---
 
@@ -34,11 +34,13 @@ Skill Custodian is the answer to these five problems.
 governed-skill/
 ├── SKILL.md                 # runtime: the instructions the agent reads
 ├── README.md                # birth background / boundaries / use cases
-├── MAINTENANCE.md           # maintenance surface: skill map / anchors / changelog / rejection index
+├── LEFTOVERS.md             # latest deferred-issues list (read every round)
+├── MAINTENANCE.md           # maintenance ledger: map / anchors / changelog / rejection index
 ├── proposals/               # proposals: open (incl. draft) + archive + two INDEXes
-├── rounds/                  # rounds: reports + pre-change snapshots
+├── rounds/                  # rounds: REPORT / HANDOFF / LEFTOVERS snapshot / pre-change snapshot
+├── references/              # maintainer references: audit rules / verdict precedents
 ├── evals/                   # regression baseline
-└── scripts/                 # deterministic scripts: birth / check / index / publish-verify
+└── scripts/                 # deterministic scripts: birth / check / index
 ```
 
 **Division of labor:** worker agents only file proposals; they do not edit the skill. A maintainer agent adjudicates, integrates, verifies, and archives in fixed rounds. The owner owns boundaries, invariants, and promotion/demotion.
@@ -139,11 +141,11 @@ python skill-maintenance/scripts/check_skill.py --skill-dir ~/skills/my-existing
 
 | Validation | Result |
 |---|---|
-| Regression tests (development repo) | **222 passed** |
+| Regression tests (development repo) | **265 passed** |
 | Dry run on a synthetic skill (19 findings) | After the revision round: 10 resolved / 2 partial / 0 still present |
-| Real pilot (`codebase-learning-plan`, 12 real proposals) | 2 rounds: **12/12 transformed (100%)**, 0 adopted, 0 recurrence, 0 unauthorized changes; SKILL.md 291→305 lines (+14), within budget |
+| Real pilot (a skill in real use, 12 real proposals) | 2 rounds: **12/12 transformed (100%)**, adopted 0, recurrences 0, boundary violations 0 |
 | Proposal quality | Real user proposals → 3 clusters → transformed into 3 stable rules; no patch pile-up |
-| Dogfooding | The companion `agent-supervisor` skill ran a real task (a one-command verification tool): one review round + one fix round, approved |
+| Dogfooding | A companion skill ran a real task (a one-command verification tool): one review round + one fix round, approved |
 | Self-check | staging and installed copies share the same `manifest`; `check_skill` is clean |
 
 > The regression suite, design spec, and pilot data live in the development repo; this repo distributes the skill itself.
@@ -158,14 +160,21 @@ python skill-maintenance/scripts/check_skill.py --skill-dir ~/skills/my-existing
 ├── README.en.md           # this file
 ├── LICENSE                # MIT
 └── skill-maintenance/     # the skill (copy it into your skills directory)
-    ├── SKILL.md           #   worker protocol / maintainer charter / 12 steps
-    ├── README.md          #   birth background / boundaries / use cases
-    ├── MAINTENANCE.md     #   dogfood ledger (self-governed)
+    ├── SKILL.md           #   entry: worker protocol / maintainer charter / 12 steps / delegation mode
+    ├── README.md          #   narrative: birth background / boundaries / use cases / changelog
+    ├── LEFTOVERS.md       #   latest deferred-issues list (published skeleton: none)
+    ├── MAINTENANCE.md     #   ledger: invariants / anchors / map / changelog / rejection index
+    ├── assets/            #   templates: README / ledger / proposal / round-report / launch / HANDOFF
+    ├── references/        #   audit rules / verdict precedents
     ├── scripts/           #   init_ledger / check_skill / index_proposals
-    ├── references/        #   audit details / verdict precedents
-    ├── assets/            #   README / ledger / proposal / round-report / launch templates
-    └── evals/             #   regression baseline
+    ├── evals/             #   regression baseline
+    ├── proposals/         #   skeleton: open/ + archive/ + two INDEXes + REPORT template
+    └── rounds/            #   skeleton: historical round evidence is not published
 ```
+
+**How to read it (the logic):** the skill separates files into two surfaces — the **runtime surface** (`SKILL.md`, `references/`, `assets/`: what the agent reads while doing a task) and the **maintenance surface** (`MAINTENANCE.md`, `proposals/`, `rounds/`, `LEFTOVERS.md`: what maintainers use). A maintenance round flows: proposal filed in `proposals/open/` → adjudicated → runtime surface updated → archived to `proposals/archive/` → evidence written to `rounds/<round-id>/` (REPORT + HANDOFF + LEFTOVERS snapshot + pre-change snapshot) → the next round starts by reading the root `LEFTOVERS.md`.
+
+> Publication policy: this repo ships the **skeleton only** (empty INDEXes / templates / empty-dir markers). Historical proposals and round evidence stay in the maintainer's local copy. A fresh clone has the full directory structure and passes `check_skill.py` out of the box.
 
 ---
 
@@ -205,4 +214,4 @@ MIT — see [`LICENSE`](LICENSE).
 
 ---
 
-<sub>Skill Custodian · v0.2.13 · rounds over improvisation</sub>
+<sub>Skill Custodian · v0.2.14 · rounds over improvisation</sub>

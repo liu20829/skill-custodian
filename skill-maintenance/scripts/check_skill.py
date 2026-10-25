@@ -13,6 +13,12 @@ REQUIRED_HEADER = ["skill_name", "owner", "created", "stage", "charter_version",
 REF_RE = re.compile(r"`([\w./-]+\.(?:md|py|json|txt|ps1|sh|png))`")
 ROUND_DIR_RE = re.compile(r"^(\d{4}-\d{2}-\d{2})-(\d+)$")
 RUNTIME_TEXT_DIRS = ("references", "assets")
+ROUND_ARTIFACTS = ("REPORT.md", "HANDOFF.md", "LEFTOVERS.md")
+LEFTOVERS_STATUSES = {"open", "处理中", "已关闭"}
+LEFTOVERS_ID_RE = re.compile(r"^L-\d{3}$")
+LEFTOVERS_COLUMNS = ("ID", "首次提出", "来源", "观察项", "处理条件", "状态", "关闭依据")
+LEFTOVERS_BULLETS = ("快照轮次", "生成日期", "相较上版")
+ROUND_ID_TOKEN_RE = re.compile(r"\d{4}-\d{2}-\d{2}-\d+")
 
 
 def _read(p: Path) -> str:
@@ -181,8 +187,87 @@ def _check_readme_boundary(skill_dir: Path, stage: str) -> list[str]:
     return findings
 
 
+def _leftovers_table(text: str) -> tuple[list[str], list[list[str]]]:
+    """解析遗留问题单表格：返回 (表头单元格, 数据行)；无表格返回 ([], [])。"""
+    header: list[str] = []
+    rows: list[list[str]] = []
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not line.startswith("|"):
+            if header:
+                break
+            continue
+        cells = [c.strip() for c in line.strip("|").split("|")]
+        if all(set(c) <= set("-: ") for c in cells):
+            continue
+        if not header:
+            header = cells
+            continue
+        rows.append(cells)
+    return header, rows
+
+
+def _check_leftovers_file(path: Path, rel: str) -> list[str]:
+    """LEFTOVERS 快照校验：标题/头部字段/表头列/ID 唯一/状态/关闭依据；空表须标"无遗留"。"""
+    text = _strip_html_comments(_read(path))
+    findings: list[str] = []
+    first = next((ln.strip() for ln in text.splitlines() if ln.strip()), "")
+    if not first.startswith("# 遗留问题单"):
+        findings.append(f"{rel}: missing heading # 遗留问题单")
+    fields: dict[str, str] = {}
+    for line in text.splitlines():
+        m = re.match(r"^-\s*(快照轮次|生成日期|相较上版):\s*(.*)$", line.strip())
+        if m:
+            fields[m.group(1)] = m.group(2).strip()
+    for key in LEFTOVERS_BULLETS:
+        if not fields.get(key):
+            findings.append(f"{rel}: missing header - {key}:")
+    summary = fields.get("相较上版")
+    if summary and not re.search(r"新增\s*\d+\s*/\s*关闭\s*\d+\s*/\s*延续\s*\d+", summary):
+        findings.append(f"{rel}: 相较上版 must be 新增 N / 关闭 N / 延续 N")
+    header, rows = _leftovers_table(text)
+    if not header:
+        findings.append(f"{rel}: missing 遗留问题单表格")
+        return findings
+    if len(header) != len(LEFTOVERS_COLUMNS):
+        findings.append(
+            f"{rel}: 表头需 {len(LEFTOVERS_COLUMNS)} 列（ID/首次提出/来源/观察项/处理条件/状态/关闭依据），got {len(header)}"
+        )
+    else:
+        for idx, (expected, actual) in enumerate(zip(LEFTOVERS_COLUMNS, header)):
+            if not actual.startswith(expected):
+                findings.append(f"{rel}: 表头第 {idx + 1} 列应为 {expected}，got {actual!r}")
+    seen: set[str] = set()
+    for row in rows:
+        if len(row) != len(LEFTOVERS_COLUMNS):
+            findings.append(f"{rel}: 数据行列数 {len(row)} != {len(LEFTOVERS_COLUMNS)}（{row}）")
+            continue
+        rid, _first_round, _source, _observation, _condition, status, closure = row
+        if not LEFTOVERS_ID_RE.match(rid):
+            findings.append(f"{rel}: invalid ID {rid!r}（须 L-001 形式）")
+        elif rid in seen:
+            findings.append(f"{rel}: duplicate ID {rid}")
+        seen.add(rid)
+        if status not in LEFTOVERS_STATUSES:
+            findings.append(f"{rel}: ID {rid} 状态须 open/处理中/已关闭，got {status!r}")
+        if status == "已关闭" and (not closure or closure == "-" or not ROUND_ID_TOKEN_RE.search(closure)):
+            findings.append(f"{rel}: ID {rid} 已关闭须写关闭轮次 + 依据")
+    if not rows and "无遗留" not in text:
+        findings.append(f"{rel}: 无数据行且缺少“无遗留”标记")
+    return findings
+
+
+def _round_dirs(skill_dir: Path) -> list[Path]:
+    rounds_dir = skill_dir / "rounds"
+    if not rounds_dir.is_dir():
+        return []
+    return sorted(
+        p for p in rounds_dir.iterdir() if p.is_dir() and ROUND_DIR_RE.match(p.name)
+    )
+
+
 def _check_structure(skill_dir: Path, stage: str) -> list[str]:
-    """维护面结构校验：三个固定目录、open 提案 REPORT 必需键、轮次 REPORT 存在。"""
+    """维护面结构校验：三个固定目录、open 提案 REPORT 必需键、轮次三件套、根遗留问题单。"""
     if stage not in {"governed", "incubating"}:
         return []
     findings = []
@@ -204,11 +289,23 @@ def _check_structure(skill_dir: Path, stage: str) -> list[str]:
             if not re.search(r"^## 裁决\s*$", text, re.M):
                 findings.append(f"{rel} missing ## 裁决")
 
-    rounds_dir = skill_dir / "rounds"
-    if rounds_dir.is_dir():
-        for child in sorted(p for p in rounds_dir.iterdir() if p.is_dir()):
-            if ROUND_DIR_RE.match(child.name) and not (child / "REPORT.md").is_file():
-                findings.append(f"rounds/{child.name}/REPORT.md missing")
+    round_dirs = _round_dirs(skill_dir)
+    for child in round_dirs:
+        for name in ROUND_ARTIFACTS:
+            if not (child / name).is_file():
+                findings.append(f"rounds/{child.name}/{name} missing")
+
+    root_leftovers = skill_dir / "LEFTOVERS.md"
+    if round_dirs and not root_leftovers.is_file():
+        findings.append("missing LEFTOVERS.md（有轮次时根遗留问题单必须存在）")
+    if root_leftovers.is_file():
+        findings += _check_leftovers_file(root_leftovers, "LEFTOVERS.md")
+    for child in round_dirs:
+        snapshot = child / "LEFTOVERS.md"
+        if snapshot.is_file():
+            findings += _check_leftovers_file(
+                snapshot, f"rounds/{child.name}/LEFTOVERS.md"
+            )
     return findings
 
 

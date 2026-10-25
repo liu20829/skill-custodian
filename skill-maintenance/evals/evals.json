@@ -54,6 +54,18 @@
       "prompt": "团队要把一个只有 SKILL.md 的轻量技能 quux 纳入长期维护，已按 §C 跑完 init_ledger.py --adopt。接下来边界怎么处理？",
       "expected_output": "收养者通读目标 SKILL.md/references/README，产出《拟边界》交 owner 审核（真实目的、做什么、明确不做什么、3 条边界判例[场景 → 算/不算 → 理由]、证据引用、待 owner 确认项）；未批准前 README 写 `状态: draft（待 owner 批准）`，维护轮不得据此裁决；owner 批准后改 `状态: ratified`，账本记 approval_id 与变更日志行；收养完成 = 结构收养 + 拟边界已交 owner。",
       "files": []
+    },
+    {
+      "id": 10,
+      "prompt": "用户说\"用技能管家处理 skill-x 的提案\"，但没说派子 agent 还是我（当前 AI）自己做。我该怎么办？做完怎么算验收通过？",
+      "expected_output": "进入 §5.7 委托处理模式：先问用户选执行方式——`派子 agent（推荐，隔离上下文）` 或 `当前 AI 自执行`（用户已明确指定则不重复问）；两种方式都按 §B 12 步协议执行；子 agent 必须写 rounds/<轮次ID>/HANDOFF.md（8 节：执行方式/结果/验证/产物/遗留/回滚/副本同步/结论），当前 AI 自执行同样要写；主 agent 以文件 + check 输出验收，不凭消息——验收 = HANDOFF.md 存在且 8 节齐全 + check_skill.py --skill-dir <目标> 退出 0 + 轮报告/裁决/归档/双 INDEX 齐全 + 根 LEFTOVERS.md 已覆盖为本轮快照；验收通过后才做副本同步。",
+      "files": []
+    },
+    {
+      "id": 11,
+      "prompt": "我跑技能维护轮时发现两件事：evals 这轮来不及实跑；另一个提案可能要等真实任务才能回填。轮次结束时这些未决项怎么处理，下一轮怎么保证不丢？",
+      "expected_output": "写入遗留问题单：根 LEFTOVERS.md = 最新全量快照，rounds/<轮次ID>/LEFTOVERS.md = 本轮不可变快照（无遗留也要写\"无遗留\"快照）；ID 从 L-001 起、永不复用；状态仅 open/处理中/已关闭，关闭写关闭轮次 + 依据；头部含快照轮次/生成日期/相较上版（新增 N / 关闭 N / 延续 N）；下一轮加载清单必读根 LEFTOVERS.md，第 4 步复核\"上轮改造项 + 遗留项\"，逐项标注已复核/已关闭/延续，未决项优先处理。",
+      "files": []
     }
   ]
 }

@@ -2,9 +2,9 @@ skill_name: skill-maintenance
 owner: owner
 created: 2026-10-19
 stage: governed
-stage_history: 2026-10-19 governed by owner (dogfood Task 9)
-charter_version: 0.2.13
-round: 2026-10-24-1
+stage_history: 2026-10-19 governed by owner
+charter_version: 0.2.14
+round:
 round_in_progress:
 evals: yes
 adopted: false
@@ -61,32 +61,21 @@ adopted: false
 
 | path | purpose | sha256 | lines | last_verified_round |
 |---|---|---|---|---|
-| assets/launch-template.md | asset template | 52bef272b6ad588967115a7a0f367ff1509b22bb69ed7fe4118f3c8fa892e263 | 10 | 2026-10-24-1 |
-| assets/MAINTENANCE.template.md | asset template | 991d16ca09e73ab6e61a9bac129396419a81b75624ed923c5269f241b81ad5ed | 41 | 2026-10-24-1 |
-| assets/README.template.md | asset template | 17143a17d2f675e81bcb28a45a25855d248f5e87fd770484eb4729171db5a2f2 | 30 | 2026-10-24-1 |
-| assets/REPORT.template.md | asset template | b9b36cb6848e46bd3888996a745eaae72fe906d9987ce72ff9584a8837fc1500 | 38 | 2026-10-24-1 |
-| assets/ROUND-REPORT.template.md | asset template | c0646d87ec47efa8594eb88f991872d6af09384e5f3660dcc5e8dcb9d5773285 | 56 | 2026-10-24-1 |
-| references/audit.md | reference | a07e7f056eeb889432597cd2b3e09679c459bed45b6498b738567c4ea5f7326a | 32 | 2026-10-24-1 |
-| references/verdict-rules.md | reference | ff5c057c34ada9669cd4cb3cb60c60c95431ccb33e17bc04728b8364146aebec | 28 | 2026-10-24-1 |
-| scripts/check_skill.py | script | 36a189bd861106d8cd2ef6129515540a376f22954303b29c1462c81eaf8a1a4e | 433 | 2026-10-24-1 |
-| scripts/index_proposals.py | script | 9eef1ea73f8e958564eeba837b1a3f5b4747a469b1212eba481b142aa0594e2b | 351 | 2026-10-24-1 |
-| scripts/init_ledger.py | script | 3f422765b8030016d20d02e62b17a41dc76f7e08890618d02b78e3d5bd021d67 | 229 | 2026-10-24-1 |
-| SKILL.md | skill instructions | 64850f0e0fb6073c12eca71cb6b614fd5cc5e08ec776816e34e174c1776c707a | 119 | 2026-10-24-1 |
+| assets/HANDOFF.template.md | asset template | 1f2173194ae4a7f030a9be33e34f4b35d06e4746f4a73e43fc9b2914b3d6b37d | 63 | init |
+| assets/launch-template.md | asset template | d5d069ca4c8b67334b994ae56e7493ee43e2bd9f86d8b8a48374e3f0ae144311 | 10 | init |
+| assets/MAINTENANCE.template.md | asset template | 991d16ca09e73ab6e61a9bac129396419a81b75624ed923c5269f241b81ad5ed | 41 | init |
+| assets/README.template.md | asset template | 17143a17d2f675e81bcb28a45a25855d248f5e87fd770484eb4729171db5a2f2 | 30 | init |
+| assets/REPORT.template.md | asset template | b9b36cb6848e46bd3888996a745eaae72fe906d9987ce72ff9584a8837fc1500 | 38 | init |
+| assets/ROUND-REPORT.template.md | asset template | f6c4fa63fc043096d24f9723e0e95e3731afa1aa9f4786b199fbfb2d086bc69e | 60 | init |
+| references/audit.md | reference | a07e7f056eeb889432597cd2b3e09679c459bed45b6498b738567c4ea5f7326a | 32 | init |
+| references/verdict-rules.md | reference | ff5c057c34ada9669cd4cb3cb60c60c95431ccb33e17bc04728b8364146aebec | 28 | init |
+| scripts/check_skill.py | script | 85dfd857270e39ff986d3120cbd1a51b95a48a18a8970b8a5a69d77ca9bf79a5 | 530 | init |
+| scripts/index_proposals.py | script | 9eef1ea73f8e958564eeba837b1a3f5b4747a469b1212eba481b142aa0594e2b | 351 | init |
+| scripts/init_ledger.py | script | 6fe18616f4e019bba855487ba130479aa70356f0573d0e938505d1b6becbc6ae | 516 | init |
+| SKILL.md | skill instructions | 0a1ecbb45fbdba5b7497d0f5c71e63d9d710ed50c74f6984c559c8e2c9ef1d89 | 127 | init |
 
 ## 变更日志
-
-- - | 2026-10-19 | birth | - | 初始化维护面 | 出生仪式 | - | - | 0→0 | open=0；越权=0
-- - | 2026-10-20 | fix | - | 不变量 I2 术语对齐为四裁决全称（owner 批准：本轮修订指示；语义不变） | 10.7a 修复轮 2 | - | - | - | open=0；越权=0
-- - | 2026-10-21 | fix | - | 确定性脚本例外纳入 index_proposals.py（owner 已批准：本轮修订指示；与 init_ledger.py 并列） | 10.7b 修复轮 | - | - | - | open=0；越权=0
-- - | 2026-10-21 | fix | - | 提案质量字段（复现证据/通用性论证/验收分档/绕过处置/簇字段）与双索引（open+archive） | 10.8 | - | - | - | open=0；越权=0
-- - | 2026-10-21 | fix | - | draft 排除触发计数/schema 标注/归档解析限定/双 INDEX 文档同步（spec 0.2.10） | 10.8 修复轮 | - | - | - | open=0；越权=0
-- - | 2026-10-22 | fix | - | 章程版本绑定 0.2.10（SKILL/launch/init 默认/账本）、V3 证据不足改 needs-info、README 模板填写说明转 HTML 注释、agent-supervisor 出生骨架入库 | 10.9 终审修复批 | - | - | - | open=0；越权=0；clp/har 账本版本对齐 defer（待 owner 批准）
-- - | 2026-10-22 | fix | - | 结构校验/地图 purpose 路径规则/--round 约束/术语与命令路径清理（spec 0.2.11） | 10.10 Minor 清理批 | - | - | - | open=0；越权=0；章程产物版本对齐 defer（控制者执行）
-- 2026-10-24-1 | 2026-10-24 | refactor | 本轮 12 条（见轮报告） | v0.2.12：锚点 bootstrap R1-R28、check_skill 校验盲区补齐、模板/文档一致性、历史轮证据 baseline | 第 1 轮维护（owner 一次性批准 SKILL.md 5 处方向） | - | R1-R28 | 114→114 | open=12→0；越权=0；改造 11、拒绝 1（133700 边界外）
-- - | 2026-10-24 | fix | 133700 | 边界纠偏：133700（双副本/发布对账）判为边界外并撤销——删 R29 与 SKILL/README 双副本表述，sync_install.py 移出技能（改本地 _private_/tools 工具）；技能边界恢复原口径 | owner 指示（approval_id: owner-2026-10-24-boundary-rollback） | - | R14, R20 | 114→114 | open=0；越权=0
-- - | 2026-10-24 | fix | - | v0.2.13 边界协议：收养拟边界交 owner 批准（draft→ratified + approval_id）、worker 边界上报 R30、REPORT 任务类型加"边界"、V9/V10、check_skill 校验 governed README ratified | owner 2026-10-24 批准边界协议（approval_id: owner-2026-10-24-boundary；R30 新增锚点，未超每轮 ≤2） | - | R30 | 114→119 | open=0；越权=0；新增锚点 1
-- - | 2026-10-24 | fix | - | R29 补 void；边界上报改用 R30（owner 2026-10-24 批准）；check_skill 边界校验细化（判例表 ≥3 条/approval_id）；README 模板状态行单值 | 10.11 修复轮（审查退回 1 Critical + 1 Important） | - | R29(void), R30 | 119→119 | open=0；越权=0；新增锚点 0
-
+- - | 2026-10-25 | release | - | 发布骨架：历史轮次与提案记录不公开（保留规则/锚点/地图） | 发布仓库整理 | - | - | - | open=0；越权=0
 ## 否决索引
 
-- D1 | 2026-10-24 | 20261024-133700-dual-copy-protocol | 边界外：双副本/发布对账属当前使用侧工作安排，不属于技能产品能力（owner 明确不对外承诺） | 重开条件：owner 明确要把该能力作为公开能力并批准边界扩张
+（发布骨架：历史否决记录不公开；完整否决索引见维护者本地副本）
